@@ -28,9 +28,9 @@
     {% for subject in subjects %}
     <div class="col-md-12 mb-4">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h4>{{ subject.name }}</h4>
-                <p>{{ subject.description }}</p>
+                <p class="mb-0">{{ subject.description }}</p>
             </div>
             <div class="card-body">
                 <!-- Create Chapter Form -->
@@ -48,9 +48,9 @@
                 <!-- Chapters List -->
                 {% for chapter in subject.chapters %}
                 <div class="card mb-3">
-                    <div class="card-header">
+                    <div class="card-header bg-success text-white">
                         <h5>{{ chapter.name }}</h5>
-                        <p>{{ chapter.description }}</p>
+                        <p class="mb-0">{{ chapter.description }}</p>
                     </div>
                     <div class="card-body">
                         <!-- Create Quiz Form -->
@@ -63,7 +63,7 @@
                                 <input type="number" name="time_duration" class="form-control" placeholder="Duration (minutes)" required>
                             </div>
                             <div class="mb-3">
-                                <textarea name="remarks" class="form-control" placeholder="Remarks"></textarea>
+                                <textarea name="remarks" class="form-control" placeholder="Quiz Remarks"></textarea>
                             </div>
                             <button type="submit" class="btn btn-info">Add Quiz</button>
                         </form>
@@ -71,31 +71,33 @@
                         <!-- Quizzes List -->
                         {% for quiz in chapter.quizzes %}
                         <div class="card mb-3">
-                            <div class="card-header">
+                            <div class="card-header bg-info text-white">
                                 <h6>Quiz on {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</h6>
                                 <p>Duration: {{ quiz.time_duration }} minutes</p>
                                 <p>{{ quiz.remarks }}</p>
                             </div>
                             <div class="card-body">
-                                <!-- Create Question Form -->
+                                <!-- Add Question Form -->
                                 <form method="POST" action="{{ url_for('create_question', quiz_id=quiz.id) }}" class="mb-3">
-                                    <div class="mb-3">
+                                    <h6>Add Question</h6>
+                                    <div class="mb-2">
                                         <textarea name="question_text" class="form-control" placeholder="Question" required></textarea>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <input type="text" name="option1" class="form-control" placeholder="Option 1" required>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <input type="text" name="option2" class="form-control" placeholder="Option 2" required>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <input type="text" name="option3" class="form-control" placeholder="Option 3" required>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <input type="text" name="option4" class="form-control" placeholder="Option 4" required>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <select name="correct_option" class="form-control" required>
+                                            <option value="">Select Correct Option</option>
                                             <option value="1">Option 1</option>
                                             <option value="2">Option 2</option>
                                             <option value="3">Option 3</option>
@@ -111,24 +113,38 @@
                                     {% for question in quiz.questions %}
                                     <div class="card mb-2">
                                         <div class="card-body">
-                                            <p>{{ question.question_text }}</p>
-                                            <small>Options: {{ question.option1 }}, {{ question.option2 }}, {{ question.option3 }}, {{ question.option4 }}</small>
+                                            <p><strong>Q: </strong>{{ question.question_text }}</p>
+                                            <p>1. {{ question.option1 }}</p>
+                                            <p>2. {{ question.option2 }}</p>
+                                            <p>3. {{ question.option3 }}</p>
+                                            <p>4. {{ question.option4 }}</p>
+                                            <p><strong>Correct: </strong>Option {{ question.correct_option }}</p>
                                         </div>
                                     </div>
                                     {% endfor %}
                                 </div>
 
-                                <!-- Quiz Scores -->
+                                <!-- User Scores -->
                                 <div class="mt-3">
-                                    <h6>Scores:</h6>
-                                    {% for score in quiz.scores %}
-                                    <div class="card mb-2">
-                                        <div class="card-body">
-                                            <p>User: {{ score.user.username }} - Score: {{ score.score }}</p>
-                                            <small>Attempted on: {{ score.attempt_date.strftime('%Y-%m-%d %H:%M') }}</small>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
+                                    <h6>User Scores:</h6>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Score</th>
+                                                <th>Attempt Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for score in quiz.scores %}
+                                            <tr>
+                                                <td>{{ score.user.username }}</td>
+                                                <td>{{ score.score }}</td>
+                                                <td>{{ score.attempt_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
