@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -120,10 +120,13 @@ def logout():
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
-    if not session.get('user_id'):
+    if 'user_id' not in session:
+        flash('Please login first', 'danger')
         return redirect(url_for('login'))
+    
     user = User.query.get(session['user_id'])
     if not user or not user.is_admin:
+        flash('Access denied', 'danger')
         return redirect(url_for('home'))
     
     subjects = Subject.query.all()
