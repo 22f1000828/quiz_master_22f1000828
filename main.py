@@ -134,14 +134,66 @@ def admin_dashboard():
 
 @app.route('/admin/subject', methods=['POST'])
 def create_subject():
-    if request.method == 'POST':
-        subject = Subject(
-            name=request.form.get('name'),
-            description=request.form.get('description')
-        )
-        db.session.add(subject)
-        db.session.commit()
-        flash('Subject created successfully', 'success')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    subject = Subject(
+        name=request.form.get('name'),
+        description=request.form.get('description')
+    )
+    db.session.add(subject)
+    db.session.commit()
+    flash('Subject created successfully', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/chapter/<int:subject_id>', methods=['POST'])
+def create_chapter(subject_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    chapter = Chapter(
+        name=request.form.get('name'),
+        description=request.form.get('description'),
+        subject_id=subject_id
+    )
+    db.session.add(chapter)
+    db.session.commit()
+    flash('Chapter created successfully', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/quiz/<int:chapter_id>', methods=['POST'])
+def create_quiz(chapter_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    quiz = Quiz(
+        chapter_id=chapter_id,
+        date_of_quiz=datetime.strptime(request.form.get('date_of_quiz'), '%Y-%m-%dT%H:%M'),
+        time_duration=int(request.form.get('time_duration')),
+        remarks=request.form.get('remarks')
+    )
+    db.session.add(quiz)
+    db.session.commit()
+    flash('Quiz created successfully', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/question/<int:quiz_id>', methods=['POST'])
+def create_question(quiz_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    question = Question(
+        quiz_id=quiz_id,
+        question_text=request.form.get('question_text'),
+        option1=request.form.get('option1'),
+        option2=request.form.get('option2'),
+        option3=request.form.get('option3'),
+        option4=request.form.get('option4'),
+        correct_option=int(request.form.get('correct_option'))
+    )
+    db.session.add(question)
+    db.session.commit()
+    flash('Question added successfully', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/user/dashboard')

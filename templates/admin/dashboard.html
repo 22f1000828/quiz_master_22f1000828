@@ -3,6 +3,7 @@
 {% block content %}
 <h2>Admin Dashboard</h2>
 
+<!-- Create Subject Form -->
 <div class="card mb-4">
     <div class="card-header">
         <h3>Create Subject</h3>
@@ -22,14 +23,119 @@
     </div>
 </div>
 
+<!-- Subjects List -->
 <div class="row">
     {% for subject in subjects %}
-    <div class="col-md-4 mb-4">
+    <div class="col-md-12 mb-4">
         <div class="card">
+            <div class="card-header">
+                <h4>{{ subject.name }}</h4>
+                <p>{{ subject.description }}</p>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">{{ subject.name }}</h5>
-                <p class="card-text">{{ subject.description }}</p>
-                <a href="{{ url_for('subject_detail', subject_id=subject.id) }}" class="btn btn-primary">Manage</a>
+                <!-- Create Chapter Form -->
+                <form method="POST" action="{{ url_for('create_chapter', subject_id=subject.id) }}" class="mb-4">
+                    <h5>Add Chapter</h5>
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control" placeholder="Chapter Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="description" class="form-control" placeholder="Chapter Description"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Chapter</button>
+                </form>
+
+                <!-- Chapters List -->
+                {% for chapter in subject.chapters %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>{{ chapter.name }}</h5>
+                        <p>{{ chapter.description }}</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Create Quiz Form -->
+                        <form method="POST" action="{{ url_for('create_quiz', chapter_id=chapter.id) }}" class="mb-4">
+                            <h6>Add Quiz</h6>
+                            <div class="mb-3">
+                                <input type="datetime-local" name="date_of_quiz" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="number" name="time_duration" class="form-control" placeholder="Duration (minutes)" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="remarks" class="form-control" placeholder="Remarks"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-info">Add Quiz</button>
+                        </form>
+
+                        <!-- Quizzes List -->
+                        {% for quiz in chapter.quizzes %}
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6>Quiz on {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</h6>
+                                <p>Duration: {{ quiz.time_duration }} minutes</p>
+                                <p>{{ quiz.remarks }}</p>
+                            </div>
+                            <div class="card-body">
+                                <!-- Create Question Form -->
+                                <form method="POST" action="{{ url_for('create_question', quiz_id=quiz.id) }}" class="mb-3">
+                                    <div class="mb-3">
+                                        <textarea name="question_text" class="form-control" placeholder="Question" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" name="option1" class="form-control" placeholder="Option 1" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" name="option2" class="form-control" placeholder="Option 2" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" name="option3" class="form-control" placeholder="Option 3" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" name="option4" class="form-control" placeholder="Option 4" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select name="correct_option" class="form-control" required>
+                                            <option value="1">Option 1</option>
+                                            <option value="2">Option 2</option>
+                                            <option value="3">Option 3</option>
+                                            <option value="4">Option 4</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">Add Question</button>
+                                </form>
+
+                                <!-- Questions List -->
+                                <div class="mt-3">
+                                    <h6>Questions:</h6>
+                                    {% for question in quiz.questions %}
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <p>{{ question.question_text }}</p>
+                                            <small>Options: {{ question.option1 }}, {{ question.option2 }}, {{ question.option3 }}, {{ question.option4 }}</small>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Quiz Scores -->
+                                <div class="mt-3">
+                                    <h6>Scores:</h6>
+                                    {% for score in quiz.scores %}
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <p>User: {{ score.user.username }} - Score: {{ score.score }}</p>
+                                            <small>Attempted on: {{ score.attempt_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
