@@ -1,29 +1,44 @@
 
 {% extends "index.html" %}
 {% block content %}
-<h2>User Dashboard</h2>
+<h2>Welcome to Your Dashboard</h2>
 
 <div class="row">
     <div class="col-md-8">
         <h3>Available Subjects</h3>
         {% for subject in subjects %}
         <div class="card mb-3">
+            <div class="card-header">
+                <h5>{{ subject.name }}</h5>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">{{ subject.name }}</h5>
-                <p class="card-text">{{ subject.description }}</p>
-                <a href="{{ url_for('subject_detail', subject_id=subject.id) }}" class="btn btn-primary">View Quizzes</a>
+                <p>{{ subject.description }}</p>
+                {% for chapter in subject.chapters %}
+                <div class="card mb-2">
+                    <div class="card-header">{{ chapter.name }}</div>
+                    <div class="card-body">
+                        {% for quiz in chapter.quizzes %}
+                        <div class="mb-2">
+                            <h6>Quiz on {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</h6>
+                            <p>Duration: {{ quiz.time_duration }} minutes</p>
+                            <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">Take Quiz</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
         {% endfor %}
     </div>
     
     <div class="col-md-4">
-        <h3>Your Scores</h3>
+        <h3>Your Quiz History</h3>
         {% for score in scores %}
         <div class="card mb-2">
             <div class="card-body">
-                <h6 class="card-title">{{ score.quiz.chapter.subject.name }} - {{ score.quiz.chapter.name }}</h6>
-                <p class="card-text">Score: {{ score.score }}</p>
+                <h6>{{ score.quiz.chapter.subject.name }} - {{ score.quiz.chapter.name }}</h6>
+                <p>Score: {{ score.score }}</p>
                 <small>Attempted on: {{ score.attempt_date.strftime('%Y-%m-%d %H:%M') }}</small>
             </div>
         </div>
