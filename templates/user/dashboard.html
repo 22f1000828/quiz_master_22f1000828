@@ -21,7 +21,7 @@
                         <div class="mb-2">
                             <h6>Quiz on {{ quiz.date_of_quiz.strftime('%Y-%m-%d %H:%M') }}</h6>
                             <p>Duration: {{ quiz.time_duration }} minutes</p>
-                            <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">Take Quiz</a>
+                            <a href="{{ url_for('routes.take_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">Take Quiz</a>
                         </div>
                         {% endfor %}
                     </div>
