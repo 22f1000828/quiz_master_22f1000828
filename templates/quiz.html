@@ -1,0 +1,38 @@
+
+{% extends "index.html" %}
+{% block content %}
+<div class="container">
+    <h2>{{ quiz.chapter.name }} Quiz</h2>
+    <p>Duration: {{ quiz.time_duration }} minutes</p>
+    
+    <form method="POST" action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}">
+        {% for question in quiz.questions %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Question {{ loop.index }}</h5>
+                <p class="card-text">{{ question.question_text }}</p>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="1" required>
+                    <label class="form-check-label">{{ question.option1 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="2">
+                    <label class="form-check-label">{{ question.option2 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="3">
+                    <label class="form-check-label">{{ question.option3 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="4">
+                    <label class="form-check-label">{{ question.option4 }}</label>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+    </form>
+</div>
+{% endblock %}
